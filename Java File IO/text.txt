@@ -1,0 +1,4 @@
+Writing to File.
+Name : A, Age: 15
+Name : B, Age: 15
+Name : C, Age: 15
