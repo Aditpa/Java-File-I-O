@@ -1,23 +1,30 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 public class TeamOutputStream {
 
-    BufferedReader reader;
 
+    private final FileWriter writer;
+    private final PersonOutputStream personOutputStream;
 
-    {
-        try {
-            reader = new BufferedReader(new FileReader("persons.txt"));
-            String person;
-            while ((person=reader.readLine()) !=null){
-            System.out.println(person);
-            }
-            reader.close();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+    public TeamOutputStream(File file) throws IOException {
+        writer = new FileWriter(file);
+        personOutputStream = new PersonOutputStream(writer);
+    }
+
+    public void writeTeam(List<Person> team) throws IOException {
+        writer.write(String.format("; TeamLength: %d\n", team.size()));
+        for (Person person : team) {
+            personOutputStream.writePerson(person);
         }
     }
+
+    public void flushAndClose() throws IOException {
+        personOutputStream.flushAndClose();
+    }
+
+
+
 }

@@ -1,21 +1,23 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class PersonOutputStream {
 
-    BufferedReader reader;
+    FileWriter writer;
+
+    public PersonOutputStream(FileWriter  writer) {
+        this.writer = writer;
+    }
+    public PersonOutputStream(File file) throws IOException {
+        this.writer= new FileWriter(file);
+    }
 
 
-    {
-        try {
-            reader = new BufferedReader(new FileReader("person.txt"));
-            System.out.println(reader.readLine());
-            reader.close();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void writePerson(Person person) throws IOException {
+        writer.write(person.getFirstName()+", "+person.getLastName()+", "+person.getAge());
+    }
+
+    public void flushAndClose() throws IOException {
+        writer.flush();
+        writer.close();
     }
 }

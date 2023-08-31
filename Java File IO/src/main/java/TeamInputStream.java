@@ -1,21 +1,37 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TeamInputStream {
 
-    String[] persons={"Name : A, Age: 15","Name : B, Age: 15","Name : C, Age: 15"};
 
-    {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("persons.txt"));
-            writer.write("Writing to File.");
-            for(String person:persons){
-                writer.write("\n"+ person);
-            }
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private final BufferedReader bufferedReader;
+    private final PersonInputStream personInputStream;
+
+    public TeamInputStream(File file) throws FileNotFoundException {
+        bufferedReader = new BufferedReader(new FileReader(file));
+        personInputStream= new PersonInputStream(bufferedReader);
     }
+    public List<Person> nextTeam() throws IOException {
+        String prefix="; TeamLength: ";
+        String line;
+        if((line =bufferedReader.readLine()) !=null && !line.isBlank() && line.startsWith(prefix)){
+            try{
+                int teamSize = Integer.parseInt(line.substring(prefix.length()));
+                List<Person> team= new ArrayList<>();
+                for(int i =0; i < teamSize; i++){
+                    team.add(personInputStream.nextPerson());
+                }
+                return team;
+            }catch (NumberFormatException e) {
+                throw new IOException("Team length identifier malformed: " + line);
+            }
+
+        }
+        return null;
+    }
+    public void close() throws IOException {
+        personInputStream.close();
+    }
+
 }
